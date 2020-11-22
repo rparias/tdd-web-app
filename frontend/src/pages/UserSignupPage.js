@@ -6,6 +6,7 @@ const UserSignupPage = (props) => {
     username: '',
     password: '',
     passwordRepeat: '',
+    pendingApiCall: false,
   });
 
   const handleOnChange = (e) => {
@@ -21,7 +22,15 @@ const UserSignupPage = (props) => {
       username: state.username,
       password: state.password,
     };
-    props.actions.postSignup(user);
+    setState({ pendingApiCall: true });
+    props.actions
+      .postSignup(user)
+      .then((response) => {
+        setState({ pendingApiCall: false });
+      })
+      .catch((error) => {
+        setState({ pendingApiCall: false });
+      });
   };
 
   return (
@@ -72,7 +81,19 @@ const UserSignupPage = (props) => {
         />
       </div>
       <div className="text-center">
-        <button className="btn btn-primary" onClick={handleOnClickSignUp}>
+        <button
+          className="btn btn-primary"
+          onClick={handleOnClickSignUp}
+          disabled={state.pendingApiCall}
+        >
+          {state.pendingApiCall && (
+            <div
+              className="spinner-border text-light spinner-border-sm mr-sm-1"
+              role="status"
+            >
+              <span className="sr-only">Loading...</span>
+            </div>
+          )}
           Sign Up
         </button>
       </div>
