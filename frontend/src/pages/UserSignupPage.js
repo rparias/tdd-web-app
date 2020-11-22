@@ -25,38 +25,56 @@ const UserSignupPage = (props) => {
   };
 
   return (
-    <div>
-      <h1>Sign Up</h1>
-      <div>
+    <div className="container">
+      <h1 className="text-center">Sign Up</h1>
+      <div className="col-12 mb-3">
+        <label>Display Name</label>
         <input
+          className="form-control"
           type="text"
           placeholder="Your display name"
           name="displayName"
           value={state.displayName}
           onChange={handleOnChange}
         />
+      </div>
+      <div className="col-12 mb-3">
+        <label>Username</label>
         <input
+          className="form-control"
           type="text"
           placeholder="Your username"
           name="username"
           value={state.username}
           onChange={handleOnChange}
         />
+      </div>
+      <div className="col-12 mb-3">
+        <label>Password</label>
         <input
+          className="form-control"
           type="password"
           placeholder="Your password"
           name="password"
           value={state.password}
           onChange={handleOnChange}
         />
+      </div>
+      <div className="col-12 mb-3">
+        <label>Repeat your Password</label>
         <input
+          className="form-control"
           type="password"
           placeholder="Repeat your password"
           name="passwordRepeat"
           value={state.passwordRepeat}
           onChange={handleOnChange}
         />
-        <button onClick={handleOnClickSignUp}>Sign Up</button>
+      </div>
+      <div className="text-center">
+        <button className="btn btn-primary" onClick={handleOnClickSignUp}>
+          Sign Up
+        </button>
       </div>
     </div>
   );
