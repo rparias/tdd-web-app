@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const UserSignupPage = () => {
+const UserSignupPage = (props) => {
   const [state, setState] = useState({
     displayName: '',
     username: '',
@@ -13,6 +13,15 @@ const UserSignupPage = () => {
       ...state,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleOnClickSignUp = () => {
+    const user = {
+      displayName: state.displayName,
+      username: state.username,
+      password: state.password,
+    };
+    props.actions.postSignup(user);
   };
 
   return (
@@ -47,10 +56,19 @@ const UserSignupPage = () => {
           value={state.passwordRepeat}
           onChange={handleOnChange}
         />
-        <button>Sign Up</button>
+        <button onClick={handleOnClickSignUp}>Sign Up</button>
       </div>
     </div>
   );
+};
+
+UserSignupPage.defaultProps = {
+  actions: {
+    postSignup: () =>
+      new Promise((resolve, reject) => {
+        resolve({});
+      }),
+  },
 };
 
 export default UserSignupPage;
