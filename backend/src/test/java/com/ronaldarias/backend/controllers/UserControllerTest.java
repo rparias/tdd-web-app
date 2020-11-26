@@ -1,5 +1,6 @@
 package com.ronaldarias.backend.controllers;
 
+import com.ronaldarias.backend.error.ApiError;
 import com.ronaldarias.backend.model.User;
 import com.ronaldarias.backend.model.shared.GenericResponse;
 import com.ronaldarias.backend.repositories.UserRepository;
@@ -188,6 +189,20 @@ public class UserControllerTest {
         user.setPassword("1234567890");
         ResponseEntity<Object> response = postSignup(user, Object.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void postUserWhenUserIsInvalidThenReceiveApiError() {
+        User user = new User();
+        ResponseEntity<ApiError> responseEntity = postSignup(user, ApiError.class);
+        assertThat(responseEntity.getBody().getUrl()).isEqualTo(API_USERS);
+    }
+
+    @Test
+    public void postUserWhenUserIsInvalidThenReceiveApiErrorWithValidationErrors() {
+        User user = new User();
+        ResponseEntity<ApiError> responseEntity = postSignup(user, ApiError.class);
+        assertThat(responseEntity.getBody().getValidationErrors().size()).isEqualTo(3);
     }
 
     public <T> ResponseEntity<T> postSignup(Object request, Class<T> response) {
