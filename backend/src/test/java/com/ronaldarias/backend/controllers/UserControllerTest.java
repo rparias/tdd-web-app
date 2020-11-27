@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -203,6 +204,42 @@ public class UserControllerTest {
         User user = new User();
         ResponseEntity<ApiError> responseEntity = postSignup(user, ApiError.class);
         assertThat(responseEntity.getBody().getValidationErrors().size()).isEqualTo(3);
+    }
+
+    @Test
+    public void postUserWhenUserHasNullUsernameThenReceiveMessageOfNullErrorForUsername() {
+        User user = createValidUser();
+        user.setUsername(null);
+        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
+        assertThat(validationErrors.get("username")).isEqualTo("must not be null");
+    }
+
+    @Test
+    public void postUserWhenUserHasNullPasswordThenReceiveGenericMessageOfNullError() {
+        User user = createValidUser();
+        user.setPassword(null);
+        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
+        assertThat(validationErrors.get("password")).isEqualTo("must not be null");
+    }
+
+    @Test
+    public void postUserWhenUserHasInvalidLengthUsernameThenReceiveGenericMessageOfSizeError() {
+        User user = createValidUser();
+        user.setUsername("abc");
+        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
+        assertThat(validationErrors.get("username")).isEqualTo("size must be between 4 and 255");
+    }
+
+    @Test
+    public void postUserWhenUserHasInvalidPasswordPatternThenReceiveGenericMessageOfPasswordPatternError() {
+        User user = createValidUser();
+        user.setPassword("alllowercase");
+        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
+        assertThat(validationErrors.get("password")).isEqualTo("Password must have at least one uppercase, one lowercase letter and one number");
     }
 
     public <T> ResponseEntity<T> postSignup(Object request, Class<T> response) {
