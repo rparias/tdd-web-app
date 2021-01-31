@@ -1,7 +1,9 @@
 package com.ronaldarias.backend.model;
 
+import com.ronaldarias.backend.annotations.UniqueUsername;
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,6 +21,7 @@ public class User {
 
     @NotNull
     @Size(min = 4, max = 255)
+    @UniqueUsername
     private String username;
 
     @NotNull
