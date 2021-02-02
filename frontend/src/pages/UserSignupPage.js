@@ -8,6 +8,7 @@ const UserSignupPage = (props) => {
     passwordRepeat: '',
     pendingApiCall: false,
   });
+  const [errors, setErrors] = useState({});
 
   const handleOnChange = (e) => {
     setState({
@@ -22,14 +23,25 @@ const UserSignupPage = (props) => {
       username: state.username,
       password: state.password,
     };
-    setState({ pendingApiCall: true });
+    setState((prevState) => {
+      return { ...prevState, pendingApiCall: true };
+    });
     props.actions
       .postSignup(user)
       .then((response) => {
-        setState({ pendingApiCall: false });
+        setState((prevState) => {
+          return { ...prevState, pendingApiCall: false };
+        });
       })
-      .catch((error) => {
-        setState({ pendingApiCall: false });
+      .catch((apiError) => {
+        let errorsApi = { ...errors };
+        if (apiError.response.data && apiError.response.data.validationErrors) {
+          errorsApi = { ...apiError.response.data.validationErrors };
+        }
+        setState((prevState) => {
+          return { ...prevState, pendingApiCall: false };
+        });
+        setErrors(errorsApi);
       });
   };
 
@@ -57,6 +69,7 @@ const UserSignupPage = (props) => {
           value={state.username}
           onChange={handleOnChange}
         />
+        <div className="invalid-feedback">{errors.displayName}</div>
       </div>
       <div className="col-12 mb-3">
         <label>Password</label>
