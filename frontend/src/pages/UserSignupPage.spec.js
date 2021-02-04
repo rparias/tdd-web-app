@@ -261,7 +261,7 @@ describe('UserSignupPage', () => {
       const { findByText } = setupForSubmit({ actions });
       fireEvent.click(button);
       const errorMessage = await findByText('Cannot be null');
-      expect(errorMessage).toBeInTheDocument();
+      expect(errorMessage).toBeTruthy();
     });
   });
 });

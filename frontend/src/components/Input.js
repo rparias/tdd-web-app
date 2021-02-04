@@ -11,6 +11,7 @@ const Input = (props) => {
       {props.label && <label>{props.label}</label>}
       <input
         type={props.type || 'text'}
+        name={props.name}
         placeholder={props.placeholder}
         value={props.value}
         onChange={props.onChange}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Input from '../components/Input';
 
 const UserSignupPage = (props) => {
   const [state, setState] = useState({
@@ -11,9 +12,10 @@ const UserSignupPage = (props) => {
   const [errors, setErrors] = useState({});
 
   const handleOnChange = (e) => {
-    setState({
-      ...state,
-      [e.target.name]: e.target.value,
+    // importat to get the name and value in this way, if not, tests could fail.
+    const {name, value} = e.target;
+    setState((prevState) => {
+      return { ...prevState, [name]: value };
     });
   };
 
@@ -49,48 +51,49 @@ const UserSignupPage = (props) => {
     <div className="container">
       <h1 className="text-center">Sign Up</h1>
       <div className="col-12 mb-3">
-        <label>Display Name</label>
-        <input
-          className="form-control"
-          type="text"
+        <Input
+          label="Display Name"
           placeholder="Your display name"
           name="displayName"
           value={state.displayName}
           onChange={handleOnChange}
+          hasError={errors.displayName && true}
+          error={errors.displayName}
         />
       </div>
       <div className="col-12 mb-3">
-        <label>Username</label>
-        <input
-          className="form-control"
-          type="text"
+        <Input
+          label="Username"
           placeholder="Your username"
           name="username"
           value={state.username}
           onChange={handleOnChange}
+          hasError={errors.username && true}
+          error={errors.username}
         />
-        <div className="invalid-feedback">{errors.displayName}</div>
       </div>
       <div className="col-12 mb-3">
-        <label>Password</label>
-        <input
-          className="form-control"
+        <Input
+          label="Password"
           type="password"
           placeholder="Your password"
           name="password"
           value={state.password}
           onChange={handleOnChange}
+          hasError={errors.password && true}
+          error={errors.password}
         />
       </div>
       <div className="col-12 mb-3">
-        <label>Repeat your Password</label>
-        <input
-          className="form-control"
+        <Input
+          label="Repeat your Password"
           type="password"
           placeholder="Repeat your password"
           name="passwordRepeat"
           value={state.passwordRepeat}
           onChange={handleOnChange}
+          hasError={errors.passwordRepeat && true}
+          error={errors.passwordRepeat}
         />
       </div>
       <div className="text-center">

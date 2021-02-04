@@ -45,6 +45,12 @@ describe('Layout', () => {
     expect(input.value).toBe('Test value');
   });
 
+  it('has name for input when it is provided as prop', () => {
+    const { container } = render(<Input name="Test name" />);
+    const input = container.querySelector('input');
+    expect(input.name).toBe('Test name');
+  });
+
   it('has onChange callback when it is provided as prop', () => {
     const onChange = jest.fn();
     const { container } = render(<Input onChange={onChange} />);
