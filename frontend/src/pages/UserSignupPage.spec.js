@@ -263,6 +263,37 @@ describe('UserSignupPage', () => {
       const errorMessage = await findByText('Cannot be null');
       expect(errorMessage).toBeTruthy();
     });
+
+    it ('enables the signup button when password and repeat password have same value', () => {
+      setupForSubmit();
+      expect(button).not.toBeDisabled();
+    });
+
+    it ('disables the signup button when password repeat does not match to password', () => {
+      setupForSubmit();
+      fireEvent.change(passwordRepeatInput, changeEvent('new-password'));
+      expect(button).toBeDisabled();
+    });
+
+    it ('disables the signup button when password does not match to password repeat', () => {
+      setupForSubmit();
+      fireEvent.change(passwordInput, changeEvent('new-password'));
+      expect(button).toBeDisabled();
+    });
+
+    it ('displays error style for password repeat input when password repeat mismatch', () => {
+      const { queryByText} = setupForSubmit();
+      fireEvent.change(passwordRepeatInput, changeEvent('new-password'));
+      const mismatchWarning = queryByText('Does not match to password')
+      expect(mismatchWarning).toBeInTheDocument();
+    });
+
+    it ('displays error style for password repeat input when password input mismatch', () => {
+      const { queryByText} = setupForSubmit();
+      fireEvent.change(passwordInput, changeEvent('new-password'));
+      const mismatchWarning = queryByText('Does not match to password')
+      expect(mismatchWarning).toBeInTheDocument();
+    });
   });
 });
 

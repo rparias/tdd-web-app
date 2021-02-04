@@ -10,6 +10,7 @@ const UserSignupPage = (props) => {
     pendingApiCall: false,
   });
   const [errors, setErrors] = useState({});
+  const [matchPassword, setMatchPassword] = useState(true);
 
   const handleOnChange = (e) => {
     // importat to get the name and value in this way, if not, tests could fail.
@@ -18,6 +19,16 @@ const UserSignupPage = (props) => {
       return { ...prevState, [name]: value };
     });
   };
+
+  const handleOnChangePassword = passwordToCompare => e => {
+    const value = e.target.value;
+    const arePasswordsTheSame = state[passwordToCompare] === value;
+    const matchErrors = { ...errors };
+    matchErrors.passwordRepeat = arePasswordsTheSame ? '' : 'Does not match to password';
+    setErrors(matchErrors)
+    setMatchPassword(arePasswordsTheSame);
+    handleOnChange(e);
+  }
 
   const handleOnClickSignUp = () => {
     const user = {
@@ -79,7 +90,7 @@ const UserSignupPage = (props) => {
           placeholder="Your password"
           name="password"
           value={state.password}
-          onChange={handleOnChange}
+          onChange={handleOnChangePassword('passwordRepeat')}
           hasError={errors.password && true}
           error={errors.password}
         />
@@ -91,7 +102,7 @@ const UserSignupPage = (props) => {
           placeholder="Repeat your password"
           name="passwordRepeat"
           value={state.passwordRepeat}
-          onChange={handleOnChange}
+          onChange={handleOnChangePassword('password')}
           hasError={errors.passwordRepeat && true}
           error={errors.passwordRepeat}
         />
@@ -100,7 +111,7 @@ const UserSignupPage = (props) => {
         <button
           className="btn btn-primary"
           onClick={handleOnClickSignUp}
-          disabled={state.pendingApiCall}
+          disabled={state.pendingApiCall || !matchPassword}
         >
           {state.pendingApiCall && (
             <div
