@@ -1,5 +1,6 @@
 package com.ronaldarias.backend.controllers;
 
+import com.ronaldarias.backend.error.ApiError;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,25 @@ public class LoginControllerTest {
         authenticate();
         ResponseEntity<Object> response = login(Object.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    public void postLoginWithoutUserCredentialsReceivesApiError() {
+        ResponseEntity<ApiError> response = login(ApiError.class);
+        assertThat(response.getBody().getUrl()).isEqualTo(API_LOGIN);
+    }
+
+    @Test
+    public void postLoginWithoutUserCredentialsReceivesApiErrorWithoutValidationErrors() {
+        ResponseEntity<String> response = login(String.class);
+        assertThat(response.getBody().contains("validationErrors")).isFalse();
+    }
+
+    @Test
+    public void postLoginWithIncorrectCredentialsReceivesUnauthorizedWithoutWWWAuthenticationHeader() {
+        authenticate();
+        ResponseEntity<Object> response = login(Object.class);
+        assertThat(response.getHeaders().containsKey("WWW-Authenticate")).isFalse();
     }
 
     public <T> ResponseEntity<T> login(Class<T> responseType) {
