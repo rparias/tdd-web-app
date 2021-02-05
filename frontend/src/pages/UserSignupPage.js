@@ -15,19 +15,25 @@ const UserSignupPage = (props) => {
   const handleOnChange = (e) => {
     // importat to get the name and value in this way, if not, tests could fail.
     const {name, value} = e.target;
+    const updatedErrors = { ...errors };
+    delete updatedErrors[name];
+    setErrors(updatedErrors);
     setState((prevState) => {
       return { ...prevState, [name]: value };
     });
   };
 
   const handleOnChangePassword = passwordToCompare => e => {
-    const value = e.target.value;
+    const {name, value} = e.target;
     const arePasswordsTheSame = state[passwordToCompare] === value;
     const matchErrors = { ...errors };
+    delete matchErrors[name];
     matchErrors.passwordRepeat = arePasswordsTheSame ? '' : 'Does not match to password';
     setErrors(matchErrors)
     setMatchPassword(arePasswordsTheSame);
-    handleOnChange(e);
+    setState((prevState) => {
+      return { ...prevState, [name]: value };
+    });
   }
 
   const handleOnClickSignUp = () => {

@@ -2,6 +2,7 @@ import React from 'react';
 import {
   render,
   fireEvent,
+  waitFor,
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 import UserSignupPage from './UserSignupPage';
@@ -293,6 +294,78 @@ describe('UserSignupPage', () => {
       fireEvent.change(passwordInput, changeEvent('new-password'));
       const mismatchWarning = queryByText('Does not match to password')
       expect(mismatchWarning).toBeInTheDocument();
+    });
+
+    it('hides the validation error when user changes the content of displayName', async () => {
+      const actions = {
+        postSignup: jest.fn().mockRejectedValue({
+          response: {
+            data: {
+              validationErrors: {
+                displayName: 'Cannot be null',
+              },
+            },
+          },
+        }),
+      };
+
+      const { queryByText } = setupForSubmit({ actions });
+      fireEvent.click(button);
+      
+      // we can replace the waitForElement with waitFor as follows
+      await waitFor(() => queryByText('Cannot be null'));
+      fireEvent.change(displayNameInput, changeEvent('name updated'));
+
+      const errorMessage = queryByText('Cannot be null');
+      expect(errorMessage).not.toBeInTheDocument();
+    });
+
+    it('hides the validation error when user changes the content of username', async () => {
+      const actions = {
+        postSignup: jest.fn().mockRejectedValue({
+          response: {
+            data: {
+              validationErrors: {
+                username: 'Username cannot be null',
+              },
+            },
+          },
+        }),
+      };
+
+      const { queryByText } = setupForSubmit({ actions });
+      fireEvent.click(button);
+      
+      // we can replace the waitForElement with waitFor as follows
+      await waitFor(() => queryByText('Username cannot be null'));
+      fireEvent.change(usernameInput, changeEvent('username updated'));
+
+      const errorMessage = queryByText('Username cannot be null');
+      expect(errorMessage).not.toBeInTheDocument();
+    });
+
+    it('hides the validation error when user changes the content of password', async () => {
+      const actions = {
+        postSignup: jest.fn().mockRejectedValue({
+          response: {
+            data: {
+              validationErrors: {
+                password: 'Cannot be null',
+              },
+            },
+          },
+        }),
+      };
+
+      const { queryByText } = setupForSubmit({ actions });
+      fireEvent.click(button);
+      
+      // we can replace the waitForElement with waitFor as follows
+      await waitFor(() => queryByText('Cannot be null'));
+      fireEvent.change(passwordInput, changeEvent('password updated'));
+
+      const errorMessage = queryByText('Cannot be null');
+      expect(errorMessage).not.toBeInTheDocument();
     });
   });
 });
