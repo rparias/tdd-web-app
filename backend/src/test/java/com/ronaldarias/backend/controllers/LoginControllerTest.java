@@ -1,6 +1,10 @@
 package com.ronaldarias.backend.controllers;
 
 import com.ronaldarias.backend.error.ApiError;
+import com.ronaldarias.backend.model.User;
+import com.ronaldarias.backend.repositories.UserRepository;
+import com.ronaldarias.backend.services.UserService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +27,18 @@ public class LoginControllerTest {
 
     @Autowired
     TestRestTemplate testRestTemplate;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    UserService userService;
+
+    @Before
+    public void cleanup() {
+        userRepository.deleteAll();
+        testRestTemplate.getRestTemplate().getInterceptors().clear();
+    }
 
     @Test
     public void postLoginWithoutUserCredentialsReceivesUnauthorized() {
@@ -54,6 +70,17 @@ public class LoginControllerTest {
         authenticate();
         ResponseEntity<Object> response = login(Object.class);
         assertThat(response.getHeaders().containsKey("WWW-Authenticate")).isFalse();
+    }
+
+    @Test
+    public void postLoginWithValidCredentialsReceivesOk() {
+        User user = TestUtil.createValidUser();
+        userService.save(user);
+        authenticate();
+
+        ResponseEntity<Object> response = login(Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     public <T> ResponseEntity<T> login(Class<T> responseType) {
