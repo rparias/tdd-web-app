@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import UserSignupPage from './pages/UserSignupPage';
+import LoginPage from './pages/LoginPage';
 import * as apiCalls from './api/apiCalls';
 
 const actions = {
@@ -10,7 +10,7 @@ const actions = {
 function App() {
   return (
     <div>
-      <UserSignupPage actions={actions} />
+      <LoginPage />
     </div>
   );
 }
