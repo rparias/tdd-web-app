@@ -100,6 +100,57 @@ public class LoginControllerTest {
         assertThat(id).isEqualTo(userInDB.getId());
     }
 
+    @Test
+    public void postLoginWithValidCredentialsReceivesLoggedInUserImage() {
+        User user = TestUtil.createValidUser();
+        User userInDB = userService.save(user);
+        authenticate();
+
+        ResponseEntity<Map<String, Object>> response = login(new ParameterizedTypeReference<Map<String, Object>>() {});
+        Map<String, Object> body = response.getBody();
+        String image = (String) body.get("image");
+
+        assertThat(image).isEqualTo(userInDB.getImage());
+    }
+
+    @Test
+    public void postLoginWithValidCredentialsReceivesLoggedInUserDisplayName() {
+        User user = TestUtil.createValidUser();
+        User userInDB = userService.save(user);
+        authenticate();
+
+        ResponseEntity<Map<String, Object>> response = login(new ParameterizedTypeReference<Map<String, Object>>() {});
+        Map<String, Object> body = response.getBody();
+        String displayName = (String) body.get("displayName");
+
+        assertThat(displayName).isEqualTo(userInDB.getDisplayName());
+    }
+
+    @Test
+    public void postLoginWithValidCredentialsReceivesLoggedInUserUsername() {
+        User user = TestUtil.createValidUser();
+        User userInDB = userService.save(user);
+        authenticate();
+
+        ResponseEntity<Map<String, Object>> response = login(new ParameterizedTypeReference<Map<String, Object>>() {});
+        Map<String, Object> body = response.getBody();
+        String username = (String) body.get("username");
+
+        assertThat(username).isEqualTo(userInDB.getUsername());
+    }
+
+    @Test
+    public void postLoginWithValidCredentialsWillNotReceivesLoggedInUserPassword() {
+        User user = TestUtil.createValidUser();
+        User userInDB = userService.save(user);
+        authenticate();
+
+        ResponseEntity<Map<String, Object>> response = login(new ParameterizedTypeReference<Map<String, Object>>() {});
+        Map<String, Object> body = response.getBody();
+
+        assertThat(body.containsKey("password")).isFalse();
+    }
+
     public <T> ResponseEntity<T> login(Class<T> responseType) {
         return testRestTemplate.postForEntity(API_LOGIN, null, responseType);
     }
