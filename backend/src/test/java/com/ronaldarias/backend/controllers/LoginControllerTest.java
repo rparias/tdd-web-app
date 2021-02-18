@@ -10,11 +10,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -83,8 +87,25 @@ public class LoginControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
+    @Test
+    public void postLoginWithValidCredentialsReceivesLoggedInUserId() {
+        User user = TestUtil.createValidUser();
+        User userInDB = userService.save(user);
+        authenticate();
+
+        ResponseEntity<Map<String, Object>> response = login(new ParameterizedTypeReference<Map<String, Object>>() {});
+        Map<String, Object> body = response.getBody();
+        Integer id = (Integer) body.get("id");
+
+        assertThat(id).isEqualTo(userInDB.getId());
+    }
+
     public <T> ResponseEntity<T> login(Class<T> responseType) {
         return testRestTemplate.postForEntity(API_LOGIN, null, responseType);
+    }
+
+    public <T> ResponseEntity<T> login(ParameterizedTypeReference<T> responseType) {
+        return testRestTemplate.exchange(API_LOGIN, HttpMethod.POST, null, responseType);
     }
 
     private void authenticate() {
