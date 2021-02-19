@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Input from '../components/Input';
 
-const LoginPage = () => {
+const LoginPage = (props) => {
   const [state, setState] = useState({
     username: '',
     password: '',
@@ -12,6 +12,14 @@ const LoginPage = () => {
     setState((prevState) => {
       return { ...prevState, [name]: value };
     });
+  };
+
+  const handleOnClickLogin = () => {
+    const body = {
+      username: state.username,
+      password: state.password,
+    };
+    props.actions.postLogin(body);
   };
 
   return (
@@ -37,10 +45,18 @@ const LoginPage = () => {
         />
       </div>
       <div className="text-center">
-        <button className="btn btn-primary">Login</button>
+        <button className="btn btn-primary" onClick={handleOnClickLogin}>
+          Login
+        </button>
       </div>
     </div>
   );
+};
+
+LoginPage.defaultProps = {
+  actions: {
+    postLogin: () => new Promise((resolve, reject) => resolve({})),
+  },
 };
 
 export default LoginPage;
